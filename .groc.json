@@ -1,0 +1,5 @@
+{ 
+  "glob": ["README.md", "*.js", "lib/*", "controllers/*", "models/*"],
+  "strip": [],
+  "out": "doc"
+}

@@ -1,0 +1,121 @@
+<!DOCTYPE html><html lang="en"><head><title>lib/dummy_app</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="lib/dummy_app"><meta name="groc-project-path" content="lib/dummy_app.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">lib/dummy_app.js</div></div><div id="document"><div class="segment"><div class="comments"><div class="wrapper"><h1 id="dummy-app">Dummy App</h1></div></div></div><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">url</span>      <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">_</span>        <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;underscore&#39;</span><span class="p">).</span><span class="nx">_</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">request</span>  <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;request&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">colors</span>   <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;colors&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">Pool</span>     <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./pool&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">dummy_service</span>  <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./dummy_service&#39;</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">Db</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;mongodb&#39;</span><span class="p">).</span><span class="nx">Db</span><span class="p">,</span>
+    <span class="nx">Server</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;mongodb&#39;</span><span class="p">).</span><span class="nx">Server</span><span class="p">,</span>
+    <span class="nx">ReplSetServers</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;mongodb&#39;</span><span class="p">).</span><span class="nx">ReplSetServers</span><span class="p">,</span>
+    <span class="nx">ObjectID</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;mongodb/lib/mongodb/bson/bson&#39;</span><span class="p">).</span><span class="nx">ObjectID</span><span class="p">,</span>
+    <span class="nx">Binary</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;mongodb&#39;</span><span class="p">).</span><span class="nx">Binary</span><span class="p">,</span>
+    <span class="nx">GridStore</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;mongodb&#39;</span><span class="p">).</span><span class="nx">GridStore</span><span class="p">,</span>
+    <span class="nx">Code</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;mongodb&#39;</span><span class="p">).</span><span class="nx">Code</span><span class="p">,</span>
+    <span class="nx">BSON</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;mongodb&#39;</span><span class="p">).</span><span class="nx">pure</span><span class="p">().</span><span class="nx">BSON</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">App</span><span class="p">(){</span>
+
+  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>Data encrypted with IV=0b16198be3f2e812</p></div></div><div class="code"><div class="wrapper">  <span class="nx">self</span><span class="p">.</span><span class="nx">identifier</span> <span class="o">=</span> <span class="s1">&#39;b4dddaf1465123f0829c2a6a40&#39;</span><span class="p">;</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">secret_key</span> <span class="o">=</span> <span class="s1">&#39;4b238246e31705900849b609a0b8d7c7fbf12acd662a125dd5777ec53ea536&#39;</span><span class="p">;</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">encrypted_secret_key</span> <span class="o">=</span> <span class="s1">&#39;B3olloMyfl3aBXZq60Jkc8tjdXcvuvpg5akjOMz8/nFlgDV5d3cmFPxu8WehcsLKd8TN4FVhFWmkIgAGYkOAEA==&#39;</span><span class="p">;</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;ELC Technologies&#39;</span><span class="p">;</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">salt</span> <span class="o">=</span> <span class="s1">&#39;20ef13251e0e474f9192bbded2b6efc54b5773eb36f82ba1b1a9a60fb1089dbd1d860b626367e4683426b029feb3e2ea5f35&#39;</span><span class="p">;</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">cookie</span> <span class="o">=</span> <span class="s1">&#39;eyJhcHBfaWRlbnRpZmllciI6ImI0ZGRkYWYxNDY1MTIzZjA4MjljMmE2YTQwIn0=--df68d190ceafbba94edebdabe948ed92faf5a04b&#39;</span><span class="p">;</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">object_id</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ObjectID</span><span class="p">();</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">api_table</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="s1">&#39;MyClass&#39;</span><span class="p">,</span> 
+                    <span class="s1">&#39;version_hash&#39;</span><span class="o">:</span> <span class="s1">&#39;f1a7fc134389fa031abce8&#39;</span>
+  <span class="p">};</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">schema</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;name&#39;</span> <span class="o">:</span> <span class="s1">&#39;String&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span> <span class="o">:</span> <span class="s1">&#39;Integer&#39;</span> <span class="p">};</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">service</span> <span class="o">=</span> <span class="nx">dummy_service</span><span class="p">;</span>
+
+  <span class="kd">function</span> <span class="nx">common_url</span><span class="p">(</span><span class="nx">extra</span><span class="p">){</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">extra</span> <span class="p">)</span>
+      <span class="nx">extra</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="s2">&quot;/apps/&quot;</span> <span class="o">+</span> <span class="nx">self</span><span class="p">.</span><span class="nx">identifier</span> <span class="o">+</span> <span class="s2">&quot;/versions/&quot;</span> <span class="o">+</span> <span class="nx">self</span><span class="p">.</span><span class="nx">api_table</span><span class="p">.</span><span class="nx">version_hash</span> <span class="o">+</span> <span class="nx">extra</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="kd">function</span> <span class="nx">create_mysql_db</span><span class="p">(){</span>
+      <span class="nx">mysql</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+          <span class="k">return</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;ERROR:&quot;</span><span class="p">.</span><span class="nx">red</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
+
+        <span class="nx">mysql</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;TRUNCATE TABLE apps&#39;</span><span class="p">);</span>
+        <span class="nx">mysql</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s2">&quot;INSERT INTO `apps` VALUES (1,&#39;App1&#39;,&#39;&quot;</span><span class="o">+</span><span class="nx">self</span><span class="p">.</span><span class="nx">identifier</span><span class="o">+</span><span class="s2">&quot;&#39;,1,&#39;&quot;</span><span class="o">+</span><span class="nx">self</span><span class="p">.</span><span class="nx">encrypted_secret_key</span><span class="o">+</span><span class="s2">&quot;&#39;,&#39;&quot;</span><span class="o">+</span><span class="nx">self</span><span class="p">.</span><span class="nx">salt</span><span class="o">+</span><span class="s2">&quot;&#39;,NOW(),NOW(),NULL,&#39;127.0.0.1&#39;,27019);&quot;</span><span class="p">);</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>mysql.query('TRUNCATE TABLE services');
+mysql.query("INSERT INTO <code>services</code> VALUES(1, '"+self.service.title+"', '"+self.service.account<em>id+"', '"+self.service.subtitle+"', 'NOW()', 'NOW()', '"+self.service.cached</em>slug+"', '"+self.service.base<em>url+"', '"+self.service.beta</em>level+"', '"+self.service.service_key+"')");</p></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>mysql.query('TRUNCATE TABLE service<em>connections')
+mysql.query("INSERT INTO <code>service_connections</code> VALUES(1, 1, '"+self.service.id+"', '"+self.service.connection.client</em>key+"', '"+self.service.connection.encrypted<em>client</em>secret+"',  '"+self.service.connection.salt+"', 'NOW()', 'NOW()', '"+self.service.connection.connected+"')");</p></div></div><div class="code"><div class="wrapper">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Dummy data created in mySQL&#39;</span><span class="p">.</span><span class="nx">green</span><span class="p">);</span>
+
+      <span class="p">});</span>
+
+  <span class="p">}</span>
+
+  <span class="kd">function</span> <span class="nx">setup_mongo_dbs</span><span class="p">(){</span>
+    <span class="nx">mongoose</span><span class="p">.</span><span class="nx">connection</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">dropDatabase</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Mongo maasive_api_test DB has been cleaned up...&quot;</span><span class="p">.</span><span class="nx">green</span><span class="p">);</span>
+
+      <span class="kd">var</span> <span class="nx">db</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Db</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">identifier</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Server</span><span class="p">(</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="mi">27019</span><span class="p">,{</span><span class="nx">auto_reconnect</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">poolSize</span><span class="o">:</span> <span class="mi">4</span><span class="p">}),</span> <span class="p">{</span><span class="nx">native_parser</span><span class="o">:</span> <span class="kc">false</span><span class="p">});</span>
+
+      <span class="nx">db</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">db</span><span class="p">){</span>
+        <span class="nx">db</span><span class="p">.</span><span class="nx">dropDatabase</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">db</span><span class="p">.</span><span class="nx">addUser</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">identifier</span><span class="p">,</span> <span class="nx">self</span><span class="p">.</span><span class="nx">secret_key</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">){</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Mongo database for dummy app has been created...&#39;</span><span class="p">.</span><span class="nx">green</span><span class="p">);</span>
+          <span class="p">});</span>
+        <span class="p">});</span>
+      <span class="p">});</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">setup_dbs</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+    <span class="nx">create_mysql_db</span><span class="p">();</span>
+    <span class="nx">setup_mongo_dbs</span><span class="p">();</span>
+  <span class="p">}</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>Api Tables</p></div></div><div class="code"><div class="wrapper">  <span class="nx">self</span><span class="p">.</span><span class="nx">create_api_table_url</span> <span class="o">=</span> <span class="nx">common_url</span><span class="p">();</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">create_api_table_params</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+    <span class="kd">var</span> <span class="nx">params</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="kd">var</span> <span class="nx">schema_wrapper</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="nx">schema_wrapper</span><span class="p">[</span><span class="nx">self</span><span class="p">.</span><span class="nx">api_table</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">schema</span><span class="p">;</span>
+    <span class="nx">params</span><span class="p">[</span><span class="nx">self</span><span class="p">.</span><span class="nx">api_table</span><span class="p">.</span><span class="nx">version_hash</span><span class="p">]</span> <span class="o">=</span> <span class="nx">schema_wrapper</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">params</span><span class="p">;</span>
+  <span class="p">}</span>
+  </div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>EndPoints
+// Create</p></div></div><div class="code"><div class="wrapper">  <span class="nx">self</span><span class="p">.</span><span class="nx">create_endpoint_url</span> <span class="o">=</span> <span class="nx">common_url</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="nx">self</span><span class="p">.</span><span class="nx">api_table</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">create_endpoint_params</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">custom_values</span><span class="p">,</span> <span class="nx">age</span><span class="p">){</span>
+    <span class="kd">var</span> <span class="nx">params</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="kd">var</span> <span class="nx">new_age</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="nx">age</span> <span class="p">){</span>
+      <span class="nx">new_age</span> <span class="o">=</span> <span class="nx">age</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="s1">&#39;elc&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="o">:</span> <span class="nx">new_age</span><span class="p">};</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="nx">custom_values</span> <span class="p">)</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">doc</span><span class="p">,</span> <span class="nx">custom_values</span><span class="p">);</span>
+    <span class="nx">params</span><span class="p">[</span><span class="nx">self</span><span class="p">.</span><span class="nx">api_table</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">params</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">create_endpoint_with_null_params</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+    <span class="nx">params</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">create_endpoint_params</span><span class="p">();</span>
+    <span class="nx">params</span><span class="p">[</span><span class="nx">self</span><span class="p">.</span><span class="nx">api_table</span><span class="p">.</span><span class="nx">name</span><span class="p">][</span><span class="s1">&#39;age&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">params</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nx">self</span><span class="p">.</span><span class="nx">query_endpoint_url</span> <span class="o">=</span> <span class="nx">common_url</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="nx">self</span><span class="p">.</span><span class="nx">api_table</span><span class="p">.</span><span class="nx">name</span><span class="o">+</span><span class="s1">&#39;/query&#39;</span><span class="p">);</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">count_endpoint_url</span> <span class="o">=</span> <span class="nx">common_url</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="nx">self</span><span class="p">.</span><span class="nx">api_table</span><span class="p">.</span><span class="nx">name</span><span class="o">+</span><span class="s1">&#39;/count&#39;</span><span class="p">);</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">update_endpoint_url</span> <span class="o">=</span> <span class="nx">common_url</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="nx">self</span><span class="p">.</span><span class="nx">api_table</span><span class="p">.</span><span class="nx">name</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="nx">self</span><span class="p">.</span><span class="nx">object_id</span><span class="p">);</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">delete_endpoint_url</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">update_endpoint_url</span><span class="p">;</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">update_endpoint_params</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+    <span class="kd">var</span> <span class="nx">params</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="nx">params</span><span class="p">[</span><span class="nx">self</span><span class="p">.</span><span class="nx">api_table</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="s1">&#39;pdx&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="o">:</span> <span class="mi">25</span><span class="p">};</span>
+    <span class="k">return</span> <span class="nx">params</span><span class="p">;</span>
+  <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">App</span><span class="p">;</span></div></div></div></div></body></html>

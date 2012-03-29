@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="en"><head><title>lib/service_connection</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="lib/service_connection"><meta name="groc-project-path" content="lib/service_connection.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">lib/service_connection.js</div></div><div id="document"><div class="segment"><div class="comments"><div class="wrapper"><h1 id="service-connection">Service connection</h1></div></div></div><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">crypto</span>   <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;crypto&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">_</span>        <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;underscore&#39;</span><span class="p">).</span><span class="nx">_</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">request</span>  <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;request&#39;</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">Instance</span><span class="p">(</span><span class="nx">attributes</span><span class="p">,</span> <span class="nx">service_attributes</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">attributes</span> <span class="o">=</span> <span class="nx">attributes</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">service_attributes</span> <span class="o">=</span> <span class="nx">service_attributes</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">Instance</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">run</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+  
+  <span class="kd">var</span> <span class="nx">params</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">query</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">);</span>
+  
+  <span class="kd">var</span> <span class="nx">uri</span> <span class="o">=</span> <span class="s1">&#39;http://&#39;</span><span class="o">+</span><span class="k">this</span><span class="p">.</span><span class="nx">service_attributes</span><span class="p">.</span><span class="nx">base_url</span><span class="o">+</span><span class="s2">&quot;:&quot;</span><span class="o">+</span><span class="k">this</span><span class="p">.</span><span class="nx">service_attributes</span><span class="p">.</span><span class="nx">base_port</span><span class="o">+</span><span class="s1">&#39;/maas/clients/&#39;</span><span class="o">+</span><span class="k">this</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">client_key</span><span class="o">+</span><span class="s1">&#39;/commands/&#39;</span><span class="o">+</span><span class="nx">params</span><span class="p">[</span><span class="s1">&#39;command&#39;</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;.json&quot;</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">headers</span> <span class="o">=</span> <span class="p">{};</span>
+  <span class="nx">headers</span><span class="p">[</span><span class="s1">&#39;Cookie&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;_maas_token=&#39;</span><span class="o">+</span><span class="k">this</span><span class="p">.</span><span class="nx">cookie_value</span><span class="p">();</span>
+  
+  <span class="kd">var</span> <span class="nx">opts</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">method</span><span class="o">:</span> <span class="s1">&#39;POST&#39;</span>
+    <span class="p">,</span> <span class="nx">uri</span><span class="o">:</span> <span class="nx">uri</span>
+    <span class="p">,</span> <span class="nx">headers</span><span class="o">:</span> <span class="nx">headers</span>
+    <span class="p">,</span> <span class="nx">json</span><span class="o">:</span> <span class="nx">params</span>
+  <span class="p">};</span>
+  
+  <span class="nx">request</span><span class="p">(</span>
+    <span class="nx">opts</span>
+  <span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">Helpers</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s2">&quot;Remote service is not responding.&quot;</span><span class="p">));</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span> <span class="o">==</span> <span class="mi">200</span><span class="p">){</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">body</span><span class="p">);</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">Helpers</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s2">&quot;Error with remote service.&quot;</span><span class="p">));</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">);</span>
+  
+<span class="p">};</span>
+
+<span class="nx">Instance</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">sign_string</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">secret</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">secret_key</span><span class="p">();</span>
+  <span class="kd">var</span> <span class="nx">shasum</span> <span class="o">=</span> <span class="nx">crypto</span><span class="p">.</span><span class="nx">createHash</span><span class="p">(</span><span class="s1">&#39;sha1&#39;</span><span class="p">);</span>
+  <span class="nx">shasum</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">string</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">client_key</span> <span class="o">+</span> <span class="nx">secret</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">shasum</span><span class="p">.</span><span class="nx">digest</span><span class="p">(</span><span class="s1">&#39;hex&#39;</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="nx">Instance</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">secret_key</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">pepper</span> <span class="o">=</span> <span class="s2">&quot;bd80b6767b06446df647edc13243e7c4b68fbe915282c547894ece6819a6bc70411fe61fadfc6b1efaeb835886f7e28b0c72658f68e2b2bcda0feb15901278a7&quot;</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">spices</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">salt</span> <span class="o">+</span> <span class="nx">pepper</span><span class="p">;</span>
+
+  <span class="kd">var</span> <span class="nx">shasum</span> <span class="o">=</span> <span class="nx">crypto</span><span class="p">.</span><span class="nx">createHash</span><span class="p">(</span><span class="s1">&#39;sha1&#39;</span><span class="p">);</span>
+  <span class="nx">shasum</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">spices</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">shasum</span><span class="p">.</span><span class="nx">digest</span><span class="p">(</span><span class="s1">&#39;hex&#39;</span><span class="p">).</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">);</span>
+
+  <span class="kd">var</span> <span class="nx">encrypted_string</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Buffer</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">encrypted_client_secret</span><span class="p">,</span> <span class="s1">&#39;base64&#39;</span><span class="p">).</span><span class="nx">toString</span><span class="p">(</span><span class="s1">&#39;binary&#39;</span><span class="p">);</span>
+
+  <span class="kd">var</span> <span class="nx">decipher</span>      <span class="o">=</span>  <span class="nx">crypto</span><span class="p">.</span><span class="nx">createDecipheriv</span><span class="p">(</span><span class="s1">&#39;aes-128-cbc&#39;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="s1">&#39;0b16198be3f2e81282e694fdb60a92544378d6fe&#39;</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">string</span>        <span class="o">=</span>  <span class="nx">decipher</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">encrypted_string</span><span class="p">,</span> <span class="s1">&#39;binary&#39;</span><span class="p">,</span> <span class="s1">&#39;binary&#39;</span><span class="p">);</span>
+  <span class="nx">string</span>            <span class="o">+=</span> <span class="nx">decipher</span><span class="p">[</span><span class="s1">&#39;final&#39;</span><span class="p">](</span><span class="s1">&#39;binary&#39;</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="nx">string</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">Instance</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">cookie_value</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">obj</span>    <span class="o">=</span> <span class="p">{</span> <span class="nx">client_key</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">client_key</span> <span class="p">};</span>
+  <span class="kd">var</span> <span class="nx">json</span>   <span class="o">=</span> <span class="k">new</span> <span class="nx">Buffer</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">obj</span><span class="p">));</span>
+  <span class="kd">var</span> <span class="nx">json64</span> <span class="o">=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="s1">&#39;base64&#39;</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">sha</span>    <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">sign_string</span><span class="p">(</span><span class="nx">json64</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">json64</span> <span class="o">+</span> <span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="nx">sha</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">Instance</span> <span class="o">=</span> <span class="nx">Instance</span><span class="p">;</span></div></div></div></div></body></html>

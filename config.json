@@ -1,0 +1,53 @@
+{
+  "development": {
+    "mysql": {
+      "user":"your_user",
+      "password":"your_password",
+      "database":"maasive_web_development",
+      "host":"localhost"
+    },
+    "mongo_url": "mongodb://localhost/maasive_api_development"
+    , "workers": 3
+    , "listen": 3001
+    , "socket path": "../"
+  },
+  "test": {
+    "mysql": {
+      "user":"your_user",
+      "password":"your_password",
+      "database":"maasive_web_test",
+      "host":"localhost"
+    },
+    "mongo_url": "mongodb://localhost:27019/maasive_api_test"
+    , "workers": 1
+    , "listen": 3001
+    , "socket path": "../"
+  },
+  "staging": {
+    "mysql": {
+      "user":"your_user",
+      "password":"your_password",
+      "database":"maasive_web_staging",
+      "host":"localhost"
+    }
+     , "mongo_url":"mongodb://your_user:your_password@localhost/maasive_api_staging"
+     , "workers": 3
+     , "listen": "/your/path/to/proxy.sock"
+     , "socket path": ""
+     , "log_path": ""
+  },
+  "production": {
+    "mysql": {
+      "user":"your_user",
+      "password":"your_password",
+      "database":"maasive_web_production",
+      "host":"your_host"
+    }
+    , "workers": 3
+    , "mongo_url" : "mongodb://your_user:your_password@localhost/maasive_api_production"
+    , "listen": "/your/path_to/proxy.sock"
+    , "socket path": ""
+    , "log_path": ""
+    , "server_user": "your_user"
+  }
+}

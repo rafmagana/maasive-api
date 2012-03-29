@@ -1,0 +1,21 @@
+{
+  "name": "maasive-api",
+  "version": "0.0.1",
+  "dependencies": {
+    "express":  "2.2.0",
+    "mongoose": "1.7.2",
+    "underscore": "1.1.6",
+    "logging":"2.0.8",
+    "colors":"0.5.0",
+    "mongodb":"0.9.6-18",
+    "request":"1.9.8",
+    "mysql":"0.9.1",
+    "cluster":"0.6.9",
+    "secure_random": "0.1.0"
+  },
+  "devDependencies":{
+    "api-easy": "0.3.4"
+    ,"should": "*"
+    ,"groc": "0.2.8"
+  }
+}
