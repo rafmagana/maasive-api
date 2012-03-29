@@ -1,0 +1,20 @@
+<!DOCTYPE html><html lang="en"><head><title>repl</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content=""><meta name="groc-document-path" content="repl"><meta name="groc-project-path" content="repl.js"><meta name="groc-github-url" content="https://github.com/elc/maasive-api"><link rel="stylesheet" type="text/css" media="all" href="assets/style.css"><script type="text/javascript" src="assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/elc/maasive-api/blob/master/repl.js">repl.js</a></div></div><div id="document"><div class="segment"><div class="comments"><div class="wrapper"><h1 id="application-console-repl">Application console (REPL)</h1></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>To ineractively run commands in the MaaSive API app context run this  </p>
+
+<pre><code>$ node repl.js
+mass (development)&gt;
+</code></pre>
+
+<p>or</p>
+
+<pre><code>$ make console
+mass (development)&gt;
+</code></pre>
+
+<p>or</p>
+
+<pre><code>$ NODE_ENV=test make console
+mass (test)&gt;
+</code></pre></div></div><div class="code"><div class="wrapper"><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./env&#39;</span><span class="p">);</span>
+
+<span class="nx">repl</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;repl&quot;</span><span class="p">);</span>
+<span class="nx">context</span> <span class="o">=</span> <span class="nx">repl</span><span class="p">.</span><span class="nx">start</span><span class="p">(</span><span class="s2">&quot;maas (&quot;</span><span class="o">+</span><span class="nx">ENV</span><span class="o">+</span><span class="s2">&quot;)&gt; &quot;</span><span class="p">).</span><span class="nx">context</span></div></div></div></div></body></html>
