@@ -5,20 +5,30 @@ set :stages, %w(production staging)
 set :default_stage, "staging"
 require 'capistrano/ext/multistage'
 
-
 set :application, "MaaSiveApi"
+
+set :user, 'your_user'
+set :group, 'your_group'
+
+set :use_sudo, false
 
 set :scm, :git
 set :repository, "git@github-api:elc/maasive-api.git"
-set :deploy_via, :remote_cache
+
+set :deploy_env, "staging"
+set :app_parent_path, "your_parent_path"
+set :app_dir_name, "#{deploy_env}.#{application}"
+set :deploy_to, "#{app_parent_path}/#{app_dir_name}"
+set :deploy_via,  :remote_cache
 
 default_run_options[:pty] = true
 
 before "deploy:restart", "custom:load_profile"
-before "deploy:restart", "npm:install"
+before "deploy:start", "npm:install"
 before "deploy:symlink", "custom:symlink"
 before "deploy:symlink", "custom:set_node_env"
 
+after "deploy:setup", "custom:forever"
 
 namespace :npm do
   desc "Updating modules with NPM"
@@ -28,28 +38,25 @@ namespace :npm do
 end
 
 namespace :custom do
+
   task :forever do
     run "npm install forever"
   end
-  
+
   task :symlink, :roles => :app do
     run <<-CMD
       ln -nfs #{shared_path}/pids #{release_path}/pids
     CMD
   end
-  
+
   task :set_node_env, :roles => :app do
     run "export NODE_ENV=#{stage}"
   end
-  
+
   task :load_profile, :roles => :app do
     run "source ~/.bash_profile"
   end
-  
-  task :setup_rvm, :roles => :app do
-    run "rvm install ruby-1.9.2-p180-rvm"
-    run "rvm use 1.9.2-p180@maasive-web --create"
-  end
+
 end
 
 namespace :tail do
@@ -73,6 +80,7 @@ namespace :tail do
 end
 
 namespace :deploy do
+
   desc "Starting the Node.js process"
   task :start, :roles => :app do
     run "cd #{current_path} && NODE_ENV=#{stage} /usr/lib/node_modules/forever/bin/forever start --sourceDir #{current_path} -l #{current_path}/log/#{stage}-#{release_name}.log server.js"
@@ -93,5 +101,11 @@ namespace :deploy do
     stop
     start
   end
-  
+
+  desc "This is not a Rails project so we don't need to run migrations"
+	task :cold do
+		update
+		start
+	end
+
 end

@@ -1,8 +1,3 @@
-set :user, 'deploy'
-# set :password, "p0rtland10"
-set :deploy_to, "/srv/www/api.staging.maasive.co"
-set :use_sudo, false
+set :deploy_to, "#{app_parent_path}/api.staging.your_maasive_domain.com"
 
-set :repository, "git@github-api:elc/MaaSiveAPI.git"
-
-server 'maas-devel.elctech.net', :app, :web, :primary => true
+server 'your_staging_server', :app, :web, :primary => true
