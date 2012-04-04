@@ -417,5 +417,5 @@ app.get('/', function(req, res) {
 
 // Just a helper to know if the server is alive
 app.get('/are/you/alive', function(req, res) {
-  res.send('yup');
+  res.send(Helpers.success());
 });
