@@ -185,6 +185,7 @@ app.configure('test', function(){
     //     - .lt
     //     - .gte
     //     - .lte
+    //     - .ne
     //     - .regexp
     //     - .in
 
