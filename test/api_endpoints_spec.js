@@ -108,6 +108,12 @@ suite.use('localhost', 3001)
           var parsed_body = JSON.parse(body).results;
           parsed_body.should.have.length(3);
         }).next()
+       .get(app.create_endpoint_url, {'age.ne': 10})
+        .expect(200)
+        .expect('should respect the ne operator', function(err, res, body){
+           var parsed_body = JSON.parse(body).results;
+           parsed_body.should.have.length(2);
+        }).next()
       //
       .get(app.create_endpoint_url, {'name.regexp': '/el/i'})
         .expect(200)
