@@ -136,7 +136,9 @@ It's used in test/api_endpoints_spec.js</p></div></div><div class="code"><div cl
 <pre><code>GET http://server
  /apps/b48fab.../versions/f1a7fc...
  /MyModel.json?attribute.eql=value
-</code></pre></div></div><div class="code"><div class="wrapper">    </div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>with parameters in the request's body</p></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><pre><code>GET http://server
+</code></pre>
+
+<p>you can use <code>attribute=value</code> as well.</p></div></div><div class="code"><div class="wrapper">    </div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>with parameters in the request's body</p></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><pre><code>GET http://server
  /apps/b48fab.../versions/f1a7fc...
  /MyModel.json
 
@@ -161,6 +163,8 @@ It's used in test/api_endpoints_spec.js</p></div></div><div class="code"><div cl
  /apps/b48fab.../versions/f1a7fc...
  /MyModel/query.json?attribute.eql=value
 </code></pre>
+
+<p>you can use <code>attribute=value</code> as well.</p>
 
 <p>with parameters in the request's body</p>
 
@@ -350,5 +354,5 @@ It's used in test/api_endpoints_spec.js</p></div></div><div class="code"><div cl
     <span class="nx">ServiceController</span><span class="p">.</span><span class="nx">run</span><span class="p">);</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><h2 id="base-routes">Base routes</h2></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>The root of the server</p></div></div><div class="code"><div class="wrapper"><span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;MaaSive API&#39;</span><span class="p">);</span>
 <span class="p">});</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>Just a helper to know if the server is alive</p></div></div><div class="code"><div class="wrapper"><span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/are/you/alive&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;yup&#39;</span><span class="p">);</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">Helpers</span><span class="p">.</span><span class="nx">success</span><span class="p">());</span>
 <span class="p">});</span></div></div></div></div></body></html>

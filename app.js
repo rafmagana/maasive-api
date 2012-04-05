@@ -183,6 +183,8 @@ app.configure('test', function(){
     //     GET http://server
     //      /apps/b48fab.../versions/f1a7fc...
     //      /MyModel.json?attribute.eql=value
+    //
+    // you can use `attribute=value` as well.
     
     // with parameters in the request's body
 
@@ -210,6 +212,8 @@ app.configure('test', function(){
     //     GET http://server
     //      /apps/b48fab.../versions/f1a7fc...
     //      /MyModel/query.json?attribute.eql=value
+    //
+    // you can use `attribute=value` as well.
     //
     // with parameters in the request's body
     //
