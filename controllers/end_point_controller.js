@@ -35,7 +35,7 @@ var EndPointController = function(){
     count: function(req, res, next) {
 
       ApiTable.findOne({ app_id: req.app.identifier, version_hash: req.params.version_hash, name: req.params.name }, function(err, api_table) {
-      if (!api_table) return res.send(Helper.error("Couldn't find Table"), 404);
+      if (!api_table) return res.send(Helpers.error("Couldn't find Table"), 404);
 
         var model = api_table.model(req.app);
 
