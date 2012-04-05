@@ -112,7 +112,8 @@ app.configure('test', function(){
   // * version_hash
   // * schema
   // * Schema structure
-  //     { version_hash_value: 
+
+  //      { version_hash_value: 
   //          {
   //              api_table_name: 
   //                    { document_schema }
