@@ -104,6 +104,37 @@ app.configure('test', function(){
 //
 //     eyJhcHBfaWRlbnRpZmllciI6IjEyM2FiYyJ9--e5f15176ea9ecebde70150f0001ea4f157e53662
 
+// ## Mongo conditional operators
+
+// These are the currently supported conditional operators to query objects in MaaSive
+
+// * `=`     (Equals) - `eql` can be used instead of it
+// * `gt`    (Greater than)
+// * `gte`   (Greater or equal than)
+// * `lt`    (Less than)
+// * `lte`   (Less or equal than)
+// * `ne`    (Not equals)
+// * `in`    (Analogous to the SQL IN modifier)
+// * `regex` (Regular expression) - Supported through `regexp`
+//
+// You can see the full set of conditional operators supported by Mongo [here](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ConditionalOperators)
+
+// ### Simple example
+
+// Mongo query
+
+//     { "myNumber" : { $gt : 5 }}
+
+// MaaSive query
+
+// Via URL (GET)
+
+//     url?myNumber.gt=5
+
+// Via parameters in request body (POST)
+
+//     { "myNumber.gt" : 5 }
+
 // ## API Tables
 
   // ### Create (POST)
@@ -139,7 +170,7 @@ app.configure('test', function(){
     AppController.authenticateApp,
     ApiTablesController.create);
 
-    // ## EndPoints
+// ## EndPoints
     
     // ### Index (GET)
     // #### Parameters
@@ -149,7 +180,7 @@ app.configure('test', function(){
 
     // #### Optional parameters
     // * conditions
-    //     - .eql
+    //     - .eql or =
     //     - .gt
     //     - .lt
     //     - .gte
