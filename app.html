@@ -53,6 +53,20 @@ It's used in test/api_endpoints_spec.js</p></div></div><div class="code"><div cl
 <p>Now we put it all together and join it with a "--". Our resulting cookie value is:  </p>
 
 <pre><code>eyJhcHBfaWRlbnRpZmllciI6IjEyM2FiYyJ9--e5f15176ea9ecebde70150f0001ea4f157e53662
+</code></pre></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><h2 id="mongo-conditional-operators">Mongo conditional operators</h2></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>These are the currently supported conditional operators to query objects in MaaSive</p></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><ul>
+<li><code>=</code>     (Equals) - <code>eql</code> can be used instead of it</li>
+<li><code>gt</code>    (Greater than)</li>
+<li><code>gte</code>   (Greater or equal than)</li>
+<li><code>lt</code>    (Less than)</li>
+<li><code>lte</code>   (Less or equal than)</li>
+<li><code>ne</code>    (Not equals)</li>
+<li><code>in</code>    (Analogous to the SQL IN modifier)</li>
+<li><code>regex</code> (Regular expression) - Supported through <code>regexp</code></li>
+</ul>
+
+<p>You can see the full set of conditional operators supported by Mongo <a href="http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ConditionalOperators">here</a></p></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><h3 id="simple-example">Simple example</h3></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>Mongo query</p></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><pre><code>{ "myNumber" : { $gt : 5 }}
+</code></pre></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>MaaSive query</p></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>Via URL (GET)</p></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><pre><code>url?myNumber.gt=5
+</code></pre></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>Via parameters in request body (POST)</p></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><pre><code>{ "myNumber.gt" : 5 }
 </code></pre></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><h2 id="api-tables">API Tables</h2></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><h3 id="create-post">Create (POST)</h3>
 
 <h4 id="parameters">Parameters</h4>
@@ -61,14 +75,14 @@ It's used in test/api_endpoints_spec.js</p></div></div><div class="code"><div cl
 <li>app_id</li>
 <li>version_hash</li>
 <li>schema</li>
-<li>Schema structure
-{ version<em>hash</em>value: 
+<li>Schema structure</li>
+</ul></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><pre><code> { version_hash_value: 
      {
-         api<em>table</em>name: 
+         api_table_name: 
                { document_schema }
      }
-  }</li>
-</ul></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><h4 id="results-object">Results (Object)</h4>
+  }
+</code></pre></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><h4 id="results-object">Results (Object)</h4>
 
 <pre><code>{ success: true }
 </code></pre>
@@ -100,11 +114,12 @@ It's used in test/api_endpoints_spec.js</p></div></div><div class="code"><div cl
 
 <ul>
 <li>conditions
-<ul><li>.eql</li>
+<ul><li>.eql or =</li>
 <li>.gt</li>
 <li>.lt</li>
 <li>.gte</li>
 <li>.lte</li>
+<li>.ne</li>
 <li>.regexp</li>
 <li>.in</li></ul></li>
 </ul></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><h4 id="results-array-of-objects">Results (Array of objects)</h4>
@@ -136,7 +151,9 @@ It's used in test/api_endpoints_spec.js</p></div></div><div class="code"><div cl
 <pre><code>GET http://server
  /apps/b48fab.../versions/f1a7fc...
  /MyModel.json?attribute.eql=value
-</code></pre></div></div><div class="code"><div class="wrapper">    </div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>with parameters in the request's body</p></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><pre><code>GET http://server
+</code></pre>
+
+<p>you can use <code>attribute=value</code> as well.</p></div></div><div class="code"><div class="wrapper">    </div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>with parameters in the request's body</p></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><pre><code>GET http://server
  /apps/b48fab.../versions/f1a7fc...
  /MyModel.json
 
@@ -161,6 +178,8 @@ It's used in test/api_endpoints_spec.js</p></div></div><div class="code"><div cl
  /apps/b48fab.../versions/f1a7fc...
  /MyModel/query.json?attribute.eql=value
 </code></pre>
+
+<p>you can use <code>attribute=value</code> as well.</p>
 
 <p>with parameters in the request's body</p>
 
@@ -350,5 +369,5 @@ It's used in test/api_endpoints_spec.js</p></div></div><div class="code"><div cl
     <span class="nx">ServiceController</span><span class="p">.</span><span class="nx">run</span><span class="p">);</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><h2 id="base-routes">Base routes</h2></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>The root of the server</p></div></div><div class="code"><div class="wrapper"><span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;MaaSive API&#39;</span><span class="p">);</span>
 <span class="p">});</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>Just a helper to know if the server is alive</p></div></div><div class="code"><div class="wrapper"><span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/are/you/alive&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;yup&#39;</span><span class="p">);</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">Helpers</span><span class="p">.</span><span class="nx">success</span><span class="p">());</span>
 <span class="p">});</span></div></div></div></div></body></html>

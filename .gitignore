@@ -3,3 +3,15 @@ dump.rdb
 .DS_Store
 pids
 sockets
+.rvmrc
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+logs
+results
+npm-debug.log
